@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container col-md-6">
+    <div class="justify-content-center">
+        <a href="{% url 'expenses:receipts' %}" class="btn btn-info btn-lg btn-block mt-3 col">My receipts</a>
+        <a href="{% url 'expenses:categories' %}" class="btn btn-info btn-lg btn-block mt-3 col">My categories</a>
+        <a href="{% url 'users:groups' %}" class="btn btn-info btn-lg btn-block mt-3 col">My groups</a>
+        <div class="row">
+            <div class="col">
+                <a href="{% url 'expenses:personal_statistics' %}" class="btn btn-info btn-lg btn-block mt-3">Personal statistics</a>
+            </div>
+            <div class="col">
+                <a href="{% url 'expenses:statistics_groups' %}" class="btn btn-info btn-lg btn-block mt-3">Group statistic</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

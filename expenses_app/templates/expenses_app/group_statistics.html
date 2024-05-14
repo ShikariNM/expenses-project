@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+        <a href="{% url 'expenses:statistics_groups' %}" class="btn btn-primary btn-lg btn-block mt-3">Return to groups</a>
+    <div class="col mt-3">
+        <h5 class="text-center">Choose date interval to get respective expenses</h5>
+        <form class="form-inline justify-content-center" method="post">
+            {% csrf_token %}
+            <div class="form-group mr-2">
+                <label for="{{ form.date_from.id_for_label }}" class="col col-form-label text-right">
+                    {{ form.date_from.label }}
+                </label>
+                <div>{{ form.date_from }}</div>
+            </div>
+            <div class="form-group mr-5">
+                <label for="{{ form.date_to.id_for_label }}" class="col col-form-label text-right">
+                    {{ form.date_to.label }}
+                </label>
+                <div>{{ form.date_to }}</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <h5 class="mt-3">Group total cost: {{ group_total_cost }}</h5>
+    {% for user, ui in users_info.items %}
+    <div class="card mb-1 mt-3">
+        <button type="button" data-toggle="collapse" data-target="#card{{ user }}" aria-expanded="false" aria-controls="card{{ user }}">{{ user }}</button>
+        <div class="card-body collapse multi-collapse" id="card{{ user }}">
+            {% for category, cat_info in ui.categories_info.items %}
+            <div class="row">
+                <p class="col-md-2" style="color: {{ cat_info.color }}"><b>{{ category }}</b></p>
+                <p class="card-text col">Category total cost: {{ cat_info.category_total_cost }}</p>
+                <p class="card-text col">Category percentage: {{ cat_info.category_percentage }}</p>
+            </div>
+            {% endfor %}
+            <p class="card-text mt-2"><b>{{ user }} total cost: {{ ui.user_total_cost }}</b></p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

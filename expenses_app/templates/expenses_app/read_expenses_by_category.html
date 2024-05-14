@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <a href="{% url 'expenses:categories' %}" class="btn btn-success btn-lg btn-block mt-3">Return to categories</a>
+    <div class="col mt-3">
+        <h5 class="text-center">Choose date interval to get respective expenses</h5>
+        <form class="form-inline" method="post">
+            {% csrf_token %}
+            <div class="form-group mr-2">
+                <label for="{{ form.date_from.id_for_label }}" class="col col-form-label text-right">
+                    {{ form.date_from.label }}
+                </label>
+                <div>{{ form.date_from }}</div>
+            </div>
+            <div class="form-group mr-5">
+                <label for="{{ form.date_to.id_for_label }}" class="col col-form-label text-right">
+                    {{ form.date_to.label }}
+                </label>
+                <div>{{ form.date_to }}</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <div class="row">
+        {% for expense in content %}
+        <div class="col-md-4">
+            <div class="card mb-1 mt-3" style="border-color: {{ expense.category.color }}; border-width: 2px">
+                <div class="card-body">
+                    <h5 class="card-title">{{ expense }}</h5>
+                    <p>Bought: {{ expense.receipt.purchase_time }}</p>
+                    <a href="{% url 'expenses:update_expense' expense.receipt.pk expense.pk %}"
+                       class="btn btn-secondary">Change</a>
+                    <a href="{% url 'expenses:delete_expense' expense.receipt.pk expense.pk %}"
+                       class="btn btn-danger">Delete</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
