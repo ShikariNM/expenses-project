@@ -5,7 +5,7 @@
     <a href="{% url 'expenses:categories' %}" class="btn btn-success btn-lg btn-block mt-3">Return to categories</a>
     <div class="col mt-3">
         <h5 class="text-center">Choose date interval to get respective expenses</h5>
-        <form class="form-inline" method="post">
+        <form class="form-inline justify-content-center" method="post">
             {% csrf_token %}
             <div class="form-group mr-2">
                 <label for="{{ form.date_from.id_for_label }}" class="col col-form-label text-right">
