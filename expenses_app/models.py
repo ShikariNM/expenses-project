@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 class Category(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
-    usefulness = models.PositiveSmallIntegerField(default=1, choices=[(i, i) for i in range(1, 11)])
+    usefulness = models.PositiveSmallIntegerField(default=1,
+                                                  choices=[(i, i) for i in range(1, 11)])
     color = models.CharField(max_length=7, default='#000000')
 
     class Meta:

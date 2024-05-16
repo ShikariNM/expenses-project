@@ -79,6 +79,12 @@ class UpdateUserForm(forms.ModelForm):
             raise forms.ValidationError("Enter correct password")
         return password
 
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if email and get_user_model().objects.filter(email=email).exists():
+            raise forms.ValidationError("A user with that email already exists.")
+        return email
+
 
 class PostGroupForm(forms.ModelForm):
     name = forms.CharField(max_length=255,

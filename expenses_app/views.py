@@ -12,8 +12,9 @@ def index(request):
 
 
 def about(request):
+    text_about = 'ABOUT'
     return render(request, 'expenses_app/about.html', {'title': 'About us',
-                                                       'content': 'ABOUT'})
+                                                       'content': text_about})
 
 
 def read_categories(request):
@@ -85,9 +86,11 @@ def read_expenses_by_category(request, category_pk):
         form = DateFromToForm()
     filter_by_category = {'category': category, **time_filters}
     content = Expense.objects.filter(**filter_by_category).order_by('receipt__purchase_time')
-    return render(request, 'expenses_app/read_expenses_by_category.html', {'title': f'{category} expenses',
-                                                                           'content': content,
-                                                                           'form': form})
+    return render(request,
+                  'expenses_app/read_expenses_by_category.html',
+                  {'title': f'{category} expenses',
+                   'content': content,
+                   'form': form})
 
 
 def read_receipts(request):
@@ -145,9 +148,11 @@ def delete_receipt(request, receipt_pk):
 def read_receipt(request, receipt_pk):
     receipt = get_object_or_404(Receipt, pk=receipt_pk)
     expenses = receipt.expense_set.all()
-    return render(request, 'expenses_app/read_receipt.html', {'title': 'Receipt expenses',
-                                                              'content': expenses,
-                                                              'receipt': receipt})
+    return render(request,
+                  'expenses_app/read_receipt.html',
+                  {'title': 'Receipt expenses',
+                   'content': expenses,
+                   'receipt': receipt})
 
 
 def post_expense(request, receipt_pk):
@@ -199,25 +204,27 @@ def delete_expense(request, receipt_pk, expense_pk):
 
 def statistics_groups(request):
     user = request.user
-    return render(request, 'expenses_app/statistics_groups.html', {'title': 'Groups',
-                                                                   'content': user.groups.all()})
+    return render(request,
+                  'expenses_app/statistics_groups.html',
+                  {'title': 'Groups',
+                   'content': user.groups.all()})
 
 
 def get_personal_statistics(user, time_filters):
-    def count_query_sum(custom_filter):
+    def count_expenses_sum(custom_filter):
         return sum(map(lambda x: x.cost, Expense.objects.filter(**custom_filter)))
     categories = Category.objects.filter(user=user)
     categories_info = dict()
 
     filter_by_user = {'receipt__user': user, **time_filters}
-    user_total_cost = count_query_sum(filter_by_user)
+    user_total_cost = count_expenses_sum(filter_by_user)
 
     if user_total_cost:
         for category in categories:
             categories_info[category.title] = dict()
             categories_info[category.title]['color'] = category.color
             filter_by_category = {'category': category, **time_filters}
-            categories_info[category.title]['category_total_cost'] = count_query_sum(filter_by_category)
+            categories_info[category.title]['category_total_cost'] = count_expenses_sum(filter_by_category)
             categories_info[category.title]['category_percentage'] = \
                 round((categories_info[category.title]['category_total_cost'] / user_total_cost) * 100, 2)
     categories_info = dict(sorted(categories_info.items(), key=lambda x: x[1]['category_total_cost'], reverse=True))
@@ -237,9 +244,11 @@ def personal_statistics(request):
     if not form:
         form = DateFromToForm()
     content = get_personal_statistics(request.user, time_filters)
-    return render(request, 'expenses_app/personal_statistics.html', {'title': 'Personal statistics',
-                                                                     'form': form,
-                                                                     'content': content})
+    return render(request,
+                  'expenses_app/personal_statistics.html',
+                  {'title': 'Personal statistics',
+                   'form': form,
+                   'content': content})
 
 
 def group_statistics(request, group_pk):
@@ -260,8 +269,12 @@ def group_statistics(request, group_pk):
     for user in users:
         users_info[user.username] = get_personal_statistics(user, time_filters)
     group_total_cost = sum(map(lambda x: x['user_total_cost'], users_info.values()))
-    users_info = dict(sorted(users_info.items(), key=lambda x: x[1]['user_total_cost'], reverse=True))
-    return render(request, 'expenses_app/group_statistics.html', {'title': 'Personal statistics',
-                                                                  'form': form,
-                                                                  'group_total_cost': group_total_cost,
-                                                                  'users_info': users_info})
+    users_info = dict(sorted(users_info.items(),
+                             key=lambda x: x[1]['user_total_cost'],
+                             reverse=True))
+    return render(request,
+                  'expenses_app/group_statistics.html',
+                  {'title': 'Personal statistics',
+                   'form': form,
+                   'group_total_cost': group_total_cost,
+                   'users_info': users_info})

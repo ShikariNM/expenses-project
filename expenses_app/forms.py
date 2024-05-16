@@ -45,7 +45,11 @@ class PostReceiptForm(forms.ModelForm):
 
 
 class DateFromToForm(forms.Form):
-    date_from = forms.DateTimeField(label='From', widget=forms.DateTimeInput(attrs={'type': 'datetime-local',
-                                                                                    'class': 'form-control'}))
-    date_to = forms.DateTimeField(label='To', widget=forms.DateTimeInput(attrs={'type': 'datetime-local',
-                                                                                'class': 'form-control'}))
+    date_from = forms.DateTimeField(label='From',
+                                    widget=forms.DateTimeInput(
+                                        attrs={'type': 'datetime-local',
+                                                       'class': 'form-control'}))
+    date_to = forms.DateTimeField(label='To',
+                                  widget=forms.DateTimeInput(
+                                      attrs={'type': 'datetime-local',
+                                             'class': 'form-control'}))

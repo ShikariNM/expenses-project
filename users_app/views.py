@@ -103,7 +103,6 @@ def update_group(request, group_pk):
             messages.error(request, 'Try again', extra_tags='danger')
     else:
         form = PostGroupForm(instance=group.customgroup)
-    print(form['admin'].value())
     return render(request, 'users_app/post_group.html', {'title': 'Update group',
                                                          'form': form})
 
