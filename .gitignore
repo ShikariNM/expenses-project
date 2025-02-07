@@ -19,8 +19,8 @@ simple_shopping_cart/
 *pyvenv.cfg
 *venv/
 *.sqlite3
-static/
-media/
+/static/
+/media/
 
 *.rsuser
 *.suo
