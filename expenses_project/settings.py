@@ -122,7 +122,7 @@ STATIC_ROOT = BASE_DIR / "static/"
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "expenses_project/static/"
+    BASE_DIR / "global_static/"
 ]
 
 # Default primary key field type
