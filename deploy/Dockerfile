@@ -12,7 +12,11 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Upgrade pip and install dependencies
-RUN pip install --upgrade pip
+RUN pip install --upgrade pip && \
+    apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    python3-dev
 
 # Copy the requirements file first (better caching)
 COPY app/requirements.txt /app/
