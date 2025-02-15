@@ -1,9 +1,6 @@
 # Stage 1: Base build stage
 FROM python:3.11-slim AS builder
 
-# Create the app directory
-RUN mkdir /app
-
 # Set the working directory
 WORKDIR /app
 
@@ -11,25 +8,25 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Upgrade pip and install dependencies
-RUN pip install --upgrade pip && \
-    apt-get update && apt-get install -y \
-    gcc \
-    libpq-dev \
-    python3-dev
-
 # Copy the requirements file first (better caching)
 COPY app/requirements.txt /app/
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Upgrade pip and install dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    python3-dev && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Stage 2: Production stage
 FROM python:3.11-slim
 
 RUN useradd -m -r appuser && \
-   mkdir /app && \
-   chown -R appuser /app
+    mkdir -p /app/static && \
+    chown -R appuser /app && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends libpq5 && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy the Python dependencies from the builder stage
 COPY --from=builder /usr/local/lib/python3.11/site-packages/ /usr/local/lib/python3.11/site-packages/
@@ -40,7 +37,6 @@ WORKDIR /app
 
 # Copy application code
 COPY --chown=appuser:appuser app .
-RUN python manage.py collectstatic
 
 # Set environment variables to optimize Python
 ENV PYTHONDONTWRITEBYTECODE=1

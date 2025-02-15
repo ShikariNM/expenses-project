@@ -12,6 +12,8 @@ services:
       - "5432:5432"
     env_file:
       - .env
+    networks:
+      - backend
 
   web:
     build:
@@ -41,6 +43,7 @@ services:
       - backend
     expose:
       - "8000"
+    command: ["sh", "-c", "python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:8000 --workers 3 expenses_project.wsgi:application"]
 
   nginx:
     image: nginx:1.26.3
