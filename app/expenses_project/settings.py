@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from .setting_functions import get_env_var
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,13 +21,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-k1@waz!-l8c9vj9gd3+h-_lta4gh&5o@n32)+(hbe(=mz0$hy='
+SECRET_KEY = get_env_var('DJANGO_SECRET_KEY', required=True)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(get_env_var('DEBUG', 0))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = get_env_var('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+CSRF_TRUSTED_ORIGINS = get_env_var('CSRF_TRUSTED_ORIGINS').split(',')
 
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
 
 # Application definition
 
@@ -75,11 +79,17 @@ WSGI_APPLICATION = 'expenses_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+DATABASES = dict()
+DATABASES['default'] = {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': get_env_var('DATABASE_NAME', BASE_DIR / 'db.sqlite3'),
+} if (DB_ENGINE := get_env_var('DATABASE_ENGINE', 'sqlite3')) == 'sqlite3' else {
+    'ENGINE': f'django.db.backends.{DB_ENGINE}',
+    'NAME': get_env_var('DATABASE_NAME', required=True),
+    'USER': get_env_var('DATABASE_USERNAME', required=True),
+    'PASSWORD': get_env_var('DATABASE_PASSWORD', required=True),
+    'HOST': get_env_var('DATABASE_HOST', '127.0.0.1'),
+    'PORT': get_env_var('DATABASE_PORT', required=True),
 }
 
 
