@@ -49,16 +49,20 @@ def post_group(request):
         form = PostGroupForm(data=request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            new_group = Group(name=cd['name'])
-            new_group.save()
-            new_group.user_set.add(request.user)
-            new_group.save()
-            new_cust_group = CustomGroup(group=new_group,
-                                         description=cd['description'],
-                                         admin=cd['admin'])
-            new_cust_group.save()
-            messages.success(request, 'Group has been added')
-
+            if not Group.objects.filter(name=cd['name']):
+                new_group = Group(name=cd['name'])
+                new_group.save()
+                new_group.user_set.add(request.user)
+                if request.user != cd['admin']:
+                    new_group.user_set.add(cd['admin'])
+                new_group.save()
+                new_cust_group = CustomGroup(group=new_group,
+                                             description=cd['description'],
+                                             admin=cd['admin'])
+                new_cust_group.save()
+                messages.success(request, 'Group has been added')
+            else:
+                messages.error(request, 'Group with the name already exist', extra_tags='danger')
         else:
             messages.error(request, 'Try again', extra_tags='danger')
     else:

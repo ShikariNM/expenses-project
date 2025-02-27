@@ -1,5 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.http.response import HttpResponseNotFound, Http404
 from django.contrib import messages
+from markdown2 import markdown
+import requests
+
 
 from expenses_app.forms import (PostCategoryForm, PostExpenseForm,
                                 PostReceiptForm, DateFromToForm)
@@ -8,11 +12,19 @@ from django.contrib.auth.models import Group
 
 
 def index(request):
+    if not request.user.is_authenticated:
+        return redirect('users:login')
     return render(request, 'expenses_app/index.html', {'title': 'Main Page'})
 
 
 def about(request):
-    text_about = 'ABOUT'
+    url = 'https://raw.githubusercontent.com/ShikariNM/expenses-project/main/README.md'
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        text_about = markdown(response.text, extras=['footnotes'])
+    except requests.RequestException:
+        raise Http404("Unable to load README.md")
     return render(request, 'expenses_app/about.html', {'title': 'About us',
                                                        'content': text_about})
 
@@ -90,6 +102,7 @@ def read_expenses_by_category(request, category_pk):
                   'expenses_app/read_expenses_by_category.html',
                   {'title': f'{category} expenses',
                    'content': content,
+                   'total_cost': sum(expense.cost for expense in content),
                    'form': form})
 
 
@@ -185,7 +198,7 @@ def update_expense(request, receipt_pk, expense_pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Expense has been changed successfully')
-            return redirect('expenses:read_receipt', receipt_pk)
+            return redirect('expenses:read_receipt', receipt_pk=receipt_pk)
         else:
             messages.error(request, 'Try again', extra_tags='danger')
     else:
@@ -199,7 +212,7 @@ def delete_expense(request, receipt_pk, expense_pk):
     expense = get_object_or_404(Expense, pk=expense_pk)
     expense.delete()
     messages.warning(request, 'Expense has been removed')
-    return redirect('expenses:read_receipt', receipt_pk)
+    return redirect('expenses:read_receipt', receipt_pk=receipt_pk)
 
 
 def statistics_groups(request):
@@ -274,7 +287,11 @@ def group_statistics(request, group_pk):
                              reverse=True))
     return render(request,
                   'expenses_app/group_statistics.html',
-                  {'title': 'Personal statistics',
+                  {'title': 'Group statistics',
                    'form': form,
                    'group_total_cost': group_total_cost,
                    'users_info': users_info})
+
+
+def page_not_found(request, exception):
+    return HttpResponseNotFound('<h1>Page not found!</h1>')

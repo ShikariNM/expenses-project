@@ -10,10 +10,20 @@ class PostCategoryForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control',
                                                      'placeholder': 'Enter title'}),
-            'usefulness': forms.Select(attrs={'class': 'form-control'}),
+            'usefulness': forms.NumberInput(attrs={'class': 'form-range',
+                                                   'type': 'range'}),
             'color': forms.TextInput(attrs={'class': 'form-control-color',
                                             'type': 'color'})
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        choices = self.fields['usefulness'].choices
+
+        self.fields['usefulness'].widget.attrs.update({
+            'min': min(choices)[0],
+            'max': max(choices)[0],
+        })
 
 
 class PostExpenseForm(forms.ModelForm):
@@ -23,7 +33,7 @@ class PostExpenseForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control',
                                                      'placeholder': 'Enter title'}),
-            'category': forms.Select(attrs={'class': 'form-control'}),
+            'category': forms.Select(attrs={'class': 'form-select'}),
             'cost': forms.NumberInput(attrs={'class': 'form-control'})
         }
 

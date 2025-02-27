@@ -1,36 +1,29 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <a href="{% url 'expenses:categories' %}" class="btn btn-success btn-lg btn-block mt-3">Return to categories</a>
-    <div class="row justify-content-center align-items-center" style="min-height: 70vh;">
-        <div class="col-md-6">
-            <form method="post">
-                {% csrf_token %}
-                {% if messages %}
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} text-center">
-                    {{ message }}
-                </div>
-                {% endfor %}
-                {% endif %}
-                {% for field in form %}
-                <div class="form-group row">
-                    <label for="{{ field.id_for_label }}"
-                           class="col-md-4 col-form-label text-right">{{ field.label }}</label>
-                    <div class="col-md-8">
-                        {{ field }}
-                        <div class="text-danger">
-                            {{ field.errors|striptags }}
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-                <div class="d-grid gap-2 text-center mt-3">
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-            </form>
-        </div>
+<div class="d-grid">
+    <a href="{% url 'expenses:categories' %}" class="btn btn-success btn-lg">Return to categories</a>
+</div>
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-4">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-floating my-2">
+                {{ form.title }}
+                <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+            </div>
+            <div class="mt-2">
+                <label for="{{ form.usefulness.id_for_label }}">{{ form.usefulness.label }}</label>
+                {{ form.usefulness }}
+            </div>
+            <div class="row align-items-center">
+                <div class="col-3"><label for="{{ form.color.id_for_label }}">{{ form.color.label }}</label></div>
+                <div class="col">{{ form.color }}</div>
+            </div>
+            <div class="d-grid gap-2 text-center mt-3">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}

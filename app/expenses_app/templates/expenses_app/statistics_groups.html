@@ -1,18 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        {% for group in content %}
-        <div class="col-md-4">
-            <div class="card mb-3 mt-3">
-                <div class="card-body">
-                    <h5 class="card-title">{{ group }}</h5>
-                    <a href="{% url 'expenses:group_statistics' group.pk %}" class="btn btn-info btn-block">Read statistics</a>
-                </div>
+<div class="row g-3">
+    {% for group in content %}
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ group }}</h5>
+                <a href="{% url 'expenses:group_statistics' group.pk %}" class="btn btn-info btn-block">Read
+                    statistics</a>
             </div>
         </div>
-        {% endfor %}
     </div>
+    {% endfor %}
 </div>
 {% endblock %}

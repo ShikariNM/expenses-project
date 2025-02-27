@@ -99,7 +99,7 @@ class PostGroupForm(forms.ModelForm):
         exclude = ['admin']
         fields = ['name', 'description', 'admin']
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 5,
+            'description': forms.Textarea(attrs={'style': "height: 140px",
                                                  'class': 'form-control',
                                                  'placeholder': 'Enter description'})
         }
