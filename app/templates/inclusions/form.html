@@ -1,0 +1,18 @@
+<form method="post">
+    {% csrf_token %}
+    <div class="text-danger text-center mb-3" style="max-width: 70%; margin: 0 auto;">
+        {{ form.non_field_errors|striptags }}
+    </div>
+    {% for field in form %}
+    <div class="form-floating my-2">
+        {{ field }}
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+    </div>
+    <div class="text-danger">
+        {{ field.errors|striptags }}
+    </div>
+    {% endfor %}
+    <div class="d-grid mt-3">
+        <button type="submit" class="btn btn-primary btn-block">{{ btn_text }}</button>
+    </div>
+</form>

@@ -1,57 +1,39 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-md-5 mt-3">
-            <h5 class="text-center mb-4">Your data</h5>
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <p class="col-md-4">Login: </p>
-                        <p class="col">{{ user.username }}</p>
-                    </div>
-                    <div class="row">
-                        <p class="col-md-4">Email: </p>
-                        <p class="col">{% if user.email %}{{ user.email }}{% else %} ... {% endif %}</p>
-                    </div>
-                    <div class="row">
-                        <p class="col-md-4">First name: </p>
-                        <p class="col">{% if user.first_name %}{{ user.first_name }}{% else %} ... {% endif %}</p></div>
-                    <div class="row">
-                        <p class="col-md-4">Last name: </p>
-                        <p class="col">{% if user.last_name %}{{ user.last_name }}{% else %} ... {% endif %}</p></div>
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <h5 class="text-center mb-3">Your data</h5>
+        <div class="card">
+            <div class="card-body">
+                <div class="row my-2">
+                    <div class="col-4">Login: </div>
+                    <div class="col">{{ user.username }}</div>
                 </div>
+                <div class="row my-2">
+                    <div class="col-4">Email: </div>
+                    <div class="col">{% if user.email %}{{ user.email }}{% else %} ... {% endif %}</div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-4">First name: </div>
+                    <div class="col">{% if user.first_name %}{{ user.first_name }}{% else %} ... {% endif %}</div></div>
+                <div class="row my-2">
+                    <div class="col-4">Last name: </div>
+                    <div class="col">{% if user.last_name %}{{ user.last_name }}{% else %} ... {% endif %}</div></div>
             </div>
         </div>
-        <div class="col-md-7 mt-3">
-            <h5 class="text-center mb-4">Change your data</h5>
-            <form method="post">
-                {% csrf_token %}
-                {% if messages %}
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} text-center">
-                    {{ message }}
-                </div>
-                {% endfor %}
-                {% endif %}
-                {% for field in form %}
-                <div class="form-group row">
-                    <label for="{{ field.id_for_label }}" class="col-sm-4 col-form-label text-right">
-                        {{ field.label }}
-                    </label>
-                    <div class="col-md-8">
-                        {{ field }}
-                        <div class="text-danger">
-                            {{ field.errors|striptags }}
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-                <div class="d-grid gap-2 text-center mt-3">
-                    <button type="submit" class="btn btn-primary btn-lg">Change</button>
-                </div>
-            </form>
+        <div class="d-grid">
+            <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#changeForm"
+                    aria-expanded="false" aria-controls="collapseExample">
+                Change your data
+            </button>
+        </div>
+    </div>
+</div>
+<div class="collapse" id="changeForm">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            {% include 'inclusions/form.html' with btn_text='Submit' %}
         </div>
     </div>
 </div>

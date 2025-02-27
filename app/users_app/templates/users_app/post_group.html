@@ -1,36 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <a href="{% url 'users:groups' %}" class="btn btn-success btn-lg btn-block mt-3">Return to groups</a>
-    <div class="row justify-content-center align-items-center" style="min-height: 70vh;">
-        <div class="col-md-6">
-            <form method="post">
-                {% csrf_token %}
-                {% if messages %}
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} text-center">
-                    {{ message }}
-                </div>
-                {% endfor %}
-                {% endif %}
-                {% for field in form %}
-                <div class="form-group row">
-                    <label for="{{ field.id_for_label }}"
-                           class="col-sm-4 col-form-label text-right">{{ field.label }}</label>
-                    <div class="col-sm-8">
-                        {{ field }}
-                        <div class="text-danger">
-                            {{ field.errors|striptags }}
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-                <div class="d-grid gap-2 text-center mt-3">
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-            </form>
-        </div>
+<div class="d-grid">
+    <a href="{% url 'users:groups' %}" class="btn btn-success btn-lg">Return to groups</a>
+</div>
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-4">
+        {% include 'inclusions/form.html' with btn_text='Submit' %}
     </div>
 </div>
 {% endblock %}

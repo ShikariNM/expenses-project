@@ -1,29 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center align-items-center" style="min-height: 70vh;">
-        <div class="col-md-6">
-            <h1 class="text-center mb-4">{{ title }}</h1>
-            <form method="post">
-                {% csrf_token %}
-                <div class="text-danger text-center mb-3" style="max-width: 70%; margin: 0 auto;">{{ form.non_field_errors|striptags }}</div>
-                {% for field in form %}
-                <div class="form-group row">
-                    <label for="{{ field.id_for_label }}" class="col-sm-4 col-form-label text-right">{{ field.label }}</label>
-                    <div class="col-sm-8">
-                        {{ field }}
-                        <div class="text-danger">
-                            {{ field.errors|striptags }}
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-                <div class="d-grid gap-2 text-center mt-3">
-                    <button type="submit" class="btn btn-primary btn-lg">Login</button>
-                </div>
-            </form>
-        </div>
+<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-4">
+        <h2 class="text-center">{{ title }}</h2>
+        {% include 'inclusions/form.html' with btn_text='Login' %}
+        <p class="text-center mt-2">New to MyExpenses? <a href="{% url 'users:register' %}">Create an account</a></p>
     </div>
 </div>
 {% endblock %}
