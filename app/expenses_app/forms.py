@@ -40,6 +40,7 @@ class PostExpenseForm(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['category'].queryset = Category.objects.filter(user=user)
+        self.fields['category'].empty_label = 'Choose the category'
 
 
 class PostReceiptForm(forms.ModelForm):

@@ -68,6 +68,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'expenses_app.context_processors.menu',
+                'expenses_app.context_processors.active_link',
             ],
         },
     },

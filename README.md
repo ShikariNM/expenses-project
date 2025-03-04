@@ -23,8 +23,8 @@ Firstly, a user must register and login to use the service. The project itself i
 It allows a user to CRUD[^2] their recipes and expenses for each recipe, CRUD their categories.
 Every expense is assigned to one of categories. A user can watch their categories and respective
 expenses filtered by chosen time period. Users can create their groups to unite with each other.
-A group creator is an admin of a group. Every user can watch their own expense statistics and
-expense statistics of each groupmate.
+Every group has an administrator who has additional privileges to manage the group. Every user
+can watch their own expense statistics and expense statistics of each groupmate.
 
 Nginx is used as reverse proxy server, Gunicorn is used as backend server. Nginx config file is
 kept in the directory */deploy/nginx/*. Database is PostgreSQL.
@@ -90,9 +90,9 @@ and execute in your console:
 чеки и расходы для каждого чека, а также создавать, читать, изменять, удалять свои категории расходов.
 Каждый расход относится к одной из категорий. Пользователь может отслеживать свои категории и 
 соответствующие расходы, фильтруя их по временному интервалу. Пользователи могут создавать свои группы,
-чтобы объединяться с другими пользователями. Создатель группы становится администратором группы.
-Каждый пользователь может следить за своей статистикой расходов и статистикой расходов участников
-групп, в которых состоит.
+чтобы объединяться с другими пользователями. В каждой группе есть администратор, который обладает
+дополнительными правами для управления группой. Каждый пользователь может следить за своей статистикой
+расходов и статистикой расходов участников групп, в которых состоит.
 
 Nginx используется как обратный прокси сервер, Gunicorn - как бэкенд сервер. Файл конфигурации
 Nginx располагается в директории */deploy/nginx/*. В качестве базы данных используется PostgreSQL.
