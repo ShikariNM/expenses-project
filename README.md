@@ -48,7 +48,7 @@ Now you can visit **127.0.0.1:80** and enjoy the application.
 
 ### Deinstallation
 
-To remove all containers, images and volumes related to the project follow the steps
+To remove all containers, images, volumes and local repo related to the project follow the steps
 and execute in your console:
 
 - `sudo docker compose -f expenses-project/deploy/docker-compose.yml down -v`
@@ -56,8 +56,7 @@ and execute in your console:
   
   > Be attentive with nginx and postgres images. Ensure you don't need it before removal.
 
-[^1]: Описание на русском языке ниже.  
-[^2]: Create, Read, Update, Delete.
+- `rm -rf expenses-project`
 
 ---
 
@@ -116,10 +115,15 @@ Nginx располагается в директории */deploy/nginx/*. В к
 
 ### Удаление
 
-Чтобы удалить все контейнеры, образы и тома, относящиеся к проекту, следуйте инструкциям
-и выполните в консоли:
+Чтобы удалить все контейнеры, образы, тома и локальный репозиторий, относящиеся к проекту, следуйте
+инструкциям и выполните в консоли:
 
 - `sudo docker compose -f expenses-project/deploy/docker-compose.yml down -v`
 - `sudo docker rmi deploy-web nginx:1.26.3 postgres:17.2`  
 
   > Будьте внимательны к образам nginx и postgres. Перед удалением убедитесь, что они вам не нужны.
+  
+- `rm -rf expenses-project`
+
+[^1]: Описание на русском языке ниже.
+[^2]: Create, Read, Update, Delete.
