@@ -119,7 +119,7 @@ Nginx располагается в директории */deploy/nginx/*. В к
 инструкциям и выполните в консоли:
 
 - `sudo docker compose -f expenses-project/deploy/docker-compose.yml down -v`
-- `sudo docker rmi deploy-web nginx:1.26.3 postgres:17.2`  
+- `sudo docker rmi deploy-web nginx:1.26.3 postgres:17.2`
 
   > Будьте внимательны к образам nginx и postgres. Перед удалением убедитесь, что они вам не нужны.
   
