@@ -1,9 +1,16 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib.auth.forms import (
+    AuthenticationForm,
+    UserCreationForm,
+    PasswordChangeForm,
+    PasswordResetForm,
+    SetPasswordForm,
+)
 
-from users_app.models import CustomGroup
+from .models import CustomGroup
+
+UserModel = get_user_model()
 
 
 class LoginUserForm(AuthenticationForm):
@@ -16,50 +23,42 @@ class LoginUserForm(AuthenticationForm):
 
 
 class RegisterUserForm(UserCreationForm):
-    username = forms.CharField(label="Login", widget=forms.TextInput(attrs={'class': 'form-control',
-                                                                            'placeholder': 'Enter login'}))
-    password1 = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={'class': 'form-control',
-                                                                                    'placeholder': 'Enter password'}))
-    password2 = forms.CharField(label="Repeat password", widget=forms.PasswordInput(attrs={'class': 'form-control',
-                                                                                    'placeholder': 'Repeat password'}))
-
-    class Meta:
-        model = get_user_model()
-        fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
-        labels = {
-            'email': 'E-mail',
-            'first_name': "First name",
-            'last_name': "Last name",
-        }
+    class Meta(UserCreationForm.Meta):
+        model = UserModel
+        fields = ('username', 'email', 'first_name', 'last_name')
         widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control',
+                                               'placeholder': 'Enter username'}),
             'email': forms.TextInput(attrs={'class': 'form-control',
-                                            'placeholder': 'Enter Email'}),
+                                            'placeholder': 'Enter email address'}),
             'first_name': forms.TextInput(attrs={'class': 'form-control',
                                                  'placeholder': 'Enter first name'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control',
                                                 'placeholder': 'Enter last name'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password1'].widget.attrs.update({'class': 'form-control',
+                                                      'placeholder': 'Enter password'})
+        self.fields['password2'].widget.attrs.update({'class': 'form-control',
+                                                      'placeholder': 'Repeat password'})
+
     def clean_email(self):
         email = self.cleaned_data['email']
-        if email and get_user_model().objects.filter(email=email).exists():
+        if email and UserModel.objects.filter(email=email).exists():
             raise forms.ValidationError("A user with that email already exists.")
         return email
 
 
 class UpdateUserForm(forms.ModelForm):
-    check_password = forms.CharField(label="Password",
+    check_password = forms.CharField(label='Enter password to identify',
                                      widget=forms.PasswordInput(attrs={'class': 'form-control',
                                                                        'placeholder': 'Enter password to confirm'}))
 
     class Meta:
-        model = get_user_model()
-        fields = ['username', 'email', 'first_name', 'last_name', 'check_password']
-        labels = {
-            'email': 'E-mail',
-            'first_name': "First name",
-            'last_name': "Last name",
-        }
+        model = UserModel
+        fields = ['username', 'email', 'first_name', 'last_name']
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control',
                                                'placeholder': 'Enter login'}),
@@ -73,17 +72,41 @@ class UpdateUserForm(forms.ModelForm):
 
     def clean_check_password(self):
         password = self.cleaned_data['check_password']
-        if not password:
-            raise forms.ValidationError("Enter password")
         if not self.instance.check_password(password):
             raise forms.ValidationError("Enter correct password")
         return password
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        if email and get_user_model().objects.filter(email=email).exists():
+        user = UserModel.objects.filter(email=email).exclude(pk=self.instance.pk)
+        if email and user.exists():
             raise forms.ValidationError("A user with that email already exists.")
         return email
+
+
+class UserPasswordChangeForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['old_password'].widget.attrs.update({'class': 'form-control',
+                                                         'placeholder': 'Enter the old password'})
+        self.fields['new_password1'].widget.attrs.update({'class': 'form-control',
+                                                          'placeholder': 'Enter a new password'})
+        self.fields['new_password2'].widget.attrs.update({'class': 'form-control',
+                                                          'placeholder': 'Repeat a new password'})
+
+
+class UserPasswordResetForm(PasswordResetForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control', 'placeholder': 'formal_placeholder'})
+
+
+class UserSetPasswordForm(SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control', 'placeholder': 'formal_placeholder'})
 
 
 class PostGroupForm(forms.ModelForm):
@@ -114,9 +137,9 @@ class PostGroupForm(forms.ModelForm):
     def clean_admin(self):
         adminname = self.cleaned_data['admin']
         try:
-            admin = User.objects.get(username=adminname)
+            admin = UserModel.objects.get(username=adminname)
             return admin
-        except User.DoesNotExist:
+        except UserModel.DoesNotExist:
             raise forms.ValidationError("User does not exist.")
 
 
@@ -134,8 +157,8 @@ class AddUserToGroupForm(forms.Form):
     def clean_user(self):
         username = self.cleaned_data['user']
         try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
+            user = UserModel.objects.get(username=username)
+        except UserModel.DoesNotExist:
             raise forms.ValidationError("User does not exist.")
         else:
             if user in self.group.user_set.all():

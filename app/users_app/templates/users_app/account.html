@@ -7,27 +7,30 @@
         <div class="card">
             <div class="card-body">
                 <div class="row my-2">
-                    <div class="col-4">Login: </div>
+                    <div class="col-4">Username:</div>
                     <div class="col">{{ user.username }}</div>
                 </div>
                 <div class="row my-2">
-                    <div class="col-4">Email: </div>
+                    <div class="col-4">Email address:</div>
                     <div class="col">{% if user.email %}{{ user.email }}{% else %} ... {% endif %}</div>
                 </div>
                 <div class="row my-2">
-                    <div class="col-4">First name: </div>
-                    <div class="col">{% if user.first_name %}{{ user.first_name }}{% else %} ... {% endif %}</div></div>
+                    <div class="col-4">First name:</div>
+                    <div class="col">{% if user.first_name %}{{ user.first_name }}{% else %} ... {% endif %}</div>
+                </div>
                 <div class="row my-2">
-                    <div class="col-4">Last name: </div>
-                    <div class="col">{% if user.last_name %}{{ user.last_name }}{% else %} ... {% endif %}</div></div>
+                    <div class="col-4">Last name:</div>
+                    <div class="col">{% if user.last_name %}{{ user.last_name }}{% else %} ... {% endif %}</div>
+                </div>
+            </div>
+            <div class="d-grid">
+                <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#changeForm"
+                        aria-expanded="false" aria-controls="collapseExample">
+                    Change your data
+                </button>
             </div>
         </div>
-        <div class="d-grid">
-            <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#changeForm"
-                    aria-expanded="false" aria-controls="collapseExample">
-                Change your data
-            </button>
-        </div>
+
     </div>
 </div>
 <div class="collapse" id="changeForm">
@@ -35,6 +38,9 @@
         <div class="col-md-5">
             {% include 'inclusions/form.html' with btn_text='Submit' %}
         </div>
+        {% if not backends.associated %}
+            <p class="text-center mt-2">Do you want to <a href="{% url 'users:password_change' %}">change the password</a>?</p>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

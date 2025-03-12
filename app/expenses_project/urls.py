@@ -21,6 +21,7 @@ from expenses_app.views import page_not_found
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('social-auth/', include('social_django.urls', namespace='social')),
     path('', include('expenses_app.urls', namespace='expenses')),
     path('users/', include('users_app.urls', namespace='users')),
 ]
