@@ -13,6 +13,6 @@
     </div>
     {% endfor %}
     <div class="d-grid mt-3">
-        <button type="submit" class="btn btn-primary btn-block">{{ btn_text }}</button>
+        <button type="submit" class="btn btn-primary btn-block">{{ btn_text|default:'Submit' }}</button>
     </div>
 </form>

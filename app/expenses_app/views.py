@@ -1,19 +1,23 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http.response import HttpResponseNotFound, Http404
 from django.contrib import messages
+from django.contrib.auth.models import Group
+
 from markdown2 import markdown
 import requests
 
+from .forms import (
+    PostCategoryForm,
+    PostExpenseForm,
+    PostReceiptForm,
+    DateFromToForm,
+)
+from .models import Category, Receipt, Expense
 
-from expenses_app.forms import (PostCategoryForm, PostExpenseForm,
-                                PostReceiptForm, DateFromToForm)
-from expenses_app.models import Category, Receipt, Expense
-from django.contrib.auth.models import Group
 
-
+@login_required
 def index(request):
-    if not request.user.is_authenticated:
-        return redirect('users:login')
     return render(request, 'expenses_app/index.html', {'title': 'Main Page'})
 
 
@@ -29,6 +33,7 @@ def about(request):
                                                        'content': text_about})
 
 
+@login_required
 def read_categories(request):
     user = request.user
     content = Category.objects.filter(user=user.pk)
@@ -36,6 +41,7 @@ def read_categories(request):
                                                             'content': content})
 
 
+@login_required
 def post_category(request):
     if request.method == 'POST':
         form = PostCategoryForm(request.POST)
@@ -49,13 +55,14 @@ def post_category(request):
             messages.success(request, 'Category has been added')
             return redirect('expenses:post_category')
         else:
-            messages.error(request, 'Try again', extra_tags='danger')
+            messages.error(request, 'Try again')
     else:
         form = PostCategoryForm()
     return render(request, 'expenses_app/post_category.html', {'title': 'Post category',
                                                                'form': form})
 
 
+@login_required
 def update_category(request, category_pk):
     category = get_object_or_404(Category, pk=category_pk)
     if request.method == 'POST':
@@ -70,13 +77,14 @@ def update_category(request, category_pk):
             messages.success(request, 'Category has been changed successfully')
             return redirect('expenses:categories')
         else:
-            messages.error(request, 'Try again', extra_tags='danger')
+            messages.error(request, 'Try again')
     else:
         form = PostCategoryForm(instance=category)
     return render(request, 'expenses_app/post_category.html', {'title': 'Update category',
                                                                'form': form})
 
 
+@login_required
 def delete_category(request, category_pk):
     category = get_object_or_404(Category, pk=category_pk)
     category.delete()
@@ -84,6 +92,7 @@ def delete_category(request, category_pk):
     return redirect('expenses:categories')
 
 
+@login_required
 def read_expenses_by_category(request, category_pk):
     category = get_object_or_404(Category, pk=category_pk)
     time_filters = dict()
@@ -106,6 +115,7 @@ def read_expenses_by_category(request, category_pk):
                    'form': form})
 
 
+@login_required
 def read_receipts(request):
     user = request.user
     content = Receipt.objects.filter(user=user.pk).order_by('-purchase_time')
@@ -116,6 +126,7 @@ def read_receipts(request):
                                                           'content': content})
 
 
+@login_required
 def post_receipt(request):
     if request.method == 'POST':
         form = PostReceiptForm(request.POST)
@@ -128,13 +139,14 @@ def post_receipt(request):
             messages.success(request, 'Receipt has been added')
             return redirect('expenses:post_receipt')
         else:
-            messages.error(request, 'Try again', extra_tags='danger')
+            messages.error(request, 'Try again')
     else:
         form = PostReceiptForm()
     return render(request, 'expenses_app/post_receipt.html', {'title': 'Post receipt',
                                                               'form': form})
 
 
+@login_required
 def update_receipt(request, receipt_pk):
     receipt = get_object_or_404(Receipt, pk=receipt_pk)
     if request.method == 'POST':
@@ -144,13 +156,14 @@ def update_receipt(request, receipt_pk):
             messages.success(request, 'Receipt has been changed successfully')
             return redirect('expenses:receipts')
         else:
-            messages.error(request, 'Try again', extra_tags='danger')
+            messages.error(request, 'Try again')
     else:
         form = PostReceiptForm(instance=receipt)
     return render(request, 'expenses_app/post_receipt.html', {'title': 'Update receipt',
                                                               'form': form})
 
 
+@login_required
 def delete_receipt(request, receipt_pk):
     receipt = get_object_or_404(Receipt, pk=receipt_pk)
     receipt.delete()
@@ -168,6 +181,7 @@ def read_receipt(request, receipt_pk):
                    'receipt': receipt})
 
 
+@login_required
 def post_expense(request, receipt_pk):
     receipt = get_object_or_404(Receipt, pk=receipt_pk)
     if request.method == 'POST':
@@ -182,7 +196,7 @@ def post_expense(request, receipt_pk):
             messages.success(request, 'Expense has been added')
             return redirect('expenses:post_expense', receipt_pk=receipt_pk)
         else:
-            messages.error(request, 'Try again', extra_tags='danger')
+            messages.error(request, 'Try again')
     else:
         form = PostExpenseForm(user=request.user)
     return render(request, 'expenses_app/post_expense.html', {'title': 'Post expense',
@@ -190,6 +204,7 @@ def post_expense(request, receipt_pk):
                                                               'receipt': receipt})
 
 
+@login_required
 def update_expense(request, receipt_pk, expense_pk):
     receipt = get_object_or_404(Receipt, pk=receipt_pk)
     expense = get_object_or_404(Expense, pk=expense_pk)
@@ -200,7 +215,7 @@ def update_expense(request, receipt_pk, expense_pk):
             messages.success(request, 'Expense has been changed successfully')
             return redirect('expenses:read_receipt', receipt_pk=receipt_pk)
         else:
-            messages.error(request, 'Try again', extra_tags='danger')
+            messages.error(request, 'Try again')
     else:
         form = PostExpenseForm(user=request.user, instance=expense)
     return render(request, 'expenses_app/post_expense.html', {'title': 'Update expense',
@@ -208,6 +223,7 @@ def update_expense(request, receipt_pk, expense_pk):
                                                               'receipt': receipt})
 
 
+@login_required
 def delete_expense(request, receipt_pk, expense_pk):
     expense = get_object_or_404(Expense, pk=expense_pk)
     expense.delete()
@@ -215,6 +231,7 @@ def delete_expense(request, receipt_pk, expense_pk):
     return redirect('expenses:read_receipt', receipt_pk=receipt_pk)
 
 
+@login_required
 def statistics_groups(request):
     user = request.user
     return render(request,
@@ -244,6 +261,7 @@ def get_personal_statistics(user, time_filters):
     return {'user_total_cost': user_total_cost, 'categories_info': categories_info}
 
 
+@login_required
 def personal_statistics(request):
     time_filters = dict()
     form = None
@@ -264,6 +282,7 @@ def personal_statistics(request):
                    'content': content})
 
 
+@login_required
 def group_statistics(request, group_pk):
     time_filters = dict()
     form = None
