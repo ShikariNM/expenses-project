@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+from distutils.util import strtobool
 from pathlib import Path
 
 from django.contrib.messages import constants as messages
@@ -27,10 +28,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = get_env_var('DJANGO_SECRET_KEY', required=True)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(get_env_var('DEBUG', 0))
+DEBUG = bool(strtobool(get_env_var('DEBUG', default=False)))
 
-ALLOWED_HOSTS = get_env_var('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
-CSRF_TRUSTED_ORIGINS = get_env_var('CSRF_TRUSTED_ORIGINS').split(',')
+ALLOWED_HOSTS = get_env_var('DJANGO_ALLOWED_HOSTS', default='127.0.0.1,localhost').split(',')
+CSRF_TRUSTED_ORIGINS = get_env_var('CSRF_TRUSTED_ORIGINS', default='http://127.0.0.1:80').split(',')
 
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
@@ -99,8 +100,8 @@ WSGI_APPLICATION = 'expenses_project.wsgi.application'
 DATABASES = dict()
 DATABASES['default'] = {
     'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': get_env_var('DATABASE_NAME', BASE_DIR / 'db.sqlite3'),
-} if (DB_ENGINE := get_env_var('DATABASE_ENGINE', 'sqlite3')) == 'sqlite3' else {
+    'NAME': get_env_var('DATABASE_NAME', default=BASE_DIR / 'db.sqlite3'),
+} if (DB_ENGINE := get_env_var('DATABASE_ENGINE', default='sqlite3')) == 'sqlite3' else {
     'ENGINE': f'django.db.backends.{DB_ENGINE}',
     'NAME': get_env_var('DATABASE_NAME', required=True),
     'USER': get_env_var('DATABASE_USERNAME', required=True),
